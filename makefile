@@ -1,17 +1,26 @@
 #MSVC makefile for getopt
 CC = cl
 
-COPTS = /MD 
+COPTS = 
 LOPTS = 
 
-ya_getopt.obj: ya_getopt.c
-	$(CC) $(COPTS) /c ya_getopt.c
+ygo_static.lib: ygo_static.obj
+	lib ygo_static.obj
 
-all: ya_getopt.obj
+ygo_dynamic.lib: ygo_dynamic.obj
+	lib ygo_dynamic.obj
 
-install: ya_getopt.obj
-	lib /OUT:getopt.lib ya_getopt.obj
-	move getopt.lib ..\msvc\lib
+ygo_static.obj: ya_getopt.c
+	$(CC) $(COPTS) /MT /Fo"ygo_static" /c ya_getopt.c
+
+ygo_dynamic.obj: ya_getopt.c
+	$(CC) $(COPTS) /MD /Fo"ygo_dynamic" /c ya_getopt.c
+
+all: ygo_static.lib ygo_dynamic.lib
+
+install: all
+	move ygo_static.lib ..\msvc\lib
+	move ygo_dynamic.lib ..\msvc\lib
 	copy ya_getopt.h ..\msvc\include\getopt.h
 
 
